@@ -1,3 +1,5 @@
+[![pipeline status](https://git.cnct.io/common-tools/samsung-cnct_solas-container/badges/master/pipeline.svg)](https://git.cnct.io/common-tools/samsung-cnct_solas-container/commits/master)
+
 # solas-container
 `solas-container` is scaffolding for new container repositories hosted by Samsung CNCT. It
 implements our best practices, such as issue and PR templates, commit hooks,
