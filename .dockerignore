@@ -4,7 +4,6 @@
 .gitignore
 .gitlab-ci.yml
 CODEOWNERS
-Jenkinsfile
 LICENSE
 README.md
 

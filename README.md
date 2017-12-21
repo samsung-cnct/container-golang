@@ -5,7 +5,7 @@
 implements our best practices, such as issue and PR templates, commit hooks,
 licensing guidelines, and so on.
 
-We use GitLab to implement our CI/CD pipelines. There is one GitLab repository for 
+We use GitLab to implement our CI/CD pipelines. There is one GitLab repository for
 each GitHub repository. Each job builds, tests and, then deploys an artifact
 to Quay.
 
@@ -37,8 +37,6 @@ rm -rf solas-container.git
 [GitHub](https://github.com/samsung-cnct/solas/blob/master/docs/github.md),
 [Quay](https://github.com/samsung-cnct/solas/blob/master/docs/quay.md),
 and [GitLab](https://github.com/samsung-cnct/solas/blob/master/docs/gitlab.md).
-
-[Jenkins](https://github.com/samsung-cnct/solas/blob/master/docs/jenkins.md) is currently being phased out.
 
 - Configure [Slack](https://github.com/samsung-cnct/solas/blob/master/docs/slack.md)
 notifications.
