@@ -26,9 +26,9 @@ RUN curl -L "$GOSU_URL" -o "$GOSU_PATH" \
 	&& rm "$GOSU_PATH.asc" \
 	&& chmod +x "$GOSU_PATH"
 
-#
+
 # entrypoint script to set the container user to host user
-#
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 
