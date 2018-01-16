@@ -29,7 +29,13 @@ Verify the go version:
 
 To run or build  your tool with the container, run 
 
-`docker run --rm -v ${go_dir}:/go -w /go${build_dir} quay.io/samsung_cnct/golang-container:latest go build <mytool>`
+`docker run --rm -v ${go_dir}:/go -w /go${build_dir} quay.io/samsung_cnct/golang-container:latest go build <mytool.go>`
 
-This will build a golang binary inside the build container and place it (via the mounted volume) into your current local directory. Be aware that unless your local environment is a Linux environment, this binary cannot execute.
+This will build a golang binary inside the build container and place it (via the mounted volume) into your current local directory. 
 
+*Special instructions for cross-compilation to OSX*
+Be aware that unless your local environment is a Linux environment, the above built binary cannot execute on a Mac. You must pass env variables telling the build to build for the OSX environment.
+
+`docker run --rm -v ${go_dir}:/go -w /go${build_dir} quay.io/samsung_cnct/golang-container:latest env GOOS=darwin GOARCH=amd64 go build <mytool.go>`
+
+Reference for the golang DockerHub container, including cross-compilation instructions, can be found [here](https://hub.docker.com/_/golang/)
