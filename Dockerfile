@@ -23,8 +23,6 @@ RUN curl -L "$GOSU_URL" -o "$GOSU_PATH" \
 	&& rm "$GOSU_PATH.asc" \
 	&& chmod +x "$GOSU_PATH"
 
-ADD hello /go/src/hello
-
 RUN go get \
     golang.org/x/tools/cmd/godoc \
     golang.org/x/tools/cmd/goimports \
