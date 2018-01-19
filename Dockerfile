@@ -1,9 +1,9 @@
 FROM golang:1.9.0
 LABEL maintainer="Guinevere Saenger <guineveresaenger@gmail.com>"
 
-ENV GODEP_VERSION v79
-ENV GODEP_URL https://github.com/tools/godep/releases/download/$GODEP_VERSION/godep_linux_amd64
-ENV GODEP_SHA256SUM "d67903869dfb994d9bc627cba7314628eb398679232b27ea2bba66b08cd59cfb  /usr/local/bin/godep"
+ENV DEP_VERSION v0.3.2
+ENV DEP_URL https://github.com/golang/dep/releases/download/$DEP_VERSION/dep-linux-amd64
+ENV DEP_SHA256SUM "d67903869dfb994d9bc627cba7314628eb398679232b27ea2bba66b08cd59cfb  /usr/local/bin/godep"
 
 ENV GOSU_VERSION 1.10
 ENV GOSU_URL https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64
@@ -13,9 +13,9 @@ ENV GOSU_PATH /usr/local/bin/gosu
 
 RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
 
-RUN curl -sL "$GODEP_URL" -o /usr/local/bin/godep \
-	&& strip /usr/local/bin/godep \
-    && chmod 755 /usr/local/bin/godep
+RUN curl -sL "$DEP_URL" -o /usr/local/bin/dep \
+	&& strip /usr/local/bin/dep \
+    && chmod 755 /usr/local/bin/dep
 
 RUN curl -L "$GOSU_URL" -o "$GOSU_PATH" \
 	&& curl -fsSL "$GOSU_URL.asc" -o "$GOSU_PATH.asc" \
