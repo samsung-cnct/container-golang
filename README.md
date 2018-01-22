@@ -6,9 +6,59 @@ This is a container that provides a build environment for golang apps. It is por
 
 ## How To Use
 
-The intended use for this container is as a build container for solas-apps (coming soon). It provides gosu with a standardized golang container, and an entrypoint.sh script that takes command line arguments.
+The intended use for this container is to provide a consistent golang test environment for CI for golang projects. It provides [gosu](https://github.com/tianon/gosu) and [dep](https://github.com/golang/dep) inside a standardized golang container. 
+
+Gosu is used in the entrypoint.sh script to add a local user.
+
+The `dep` functionality is a flexible dependency manager that identifies the imported dependencies in the Golang code, imports them, and sets them in a `vendor` directory. This way, CI can run and test the Go code in any project inside this container. Dep is, per its creators, still in the experiemntal state, but it is actively being improved and developed, and is by far the best dependency management tool out there for CI purposes. The alternative, `godep`, would require each and every project to be checked in to CI with a `vendor` directory already created; `dep` creates one inside the golang container during each CI run.
 
 The original golang image is from the [Docker Hub golang image](https://hub.docker.com/_/golang/).
+
+
+### Setting up CI in your project
+
+In your Golang project's .gitlab-ci.yml, use this container as follows. 
+
+In your build and/or test stage, the golang container image can be set with the `image` key:
+
+```
+image: quay.io/samsung-cnct/golang-container:latest
+```
+
+Because CI places your files in the container's `samsung-cnct` directory, rather than in the container's GOPATH at `/go/src/github.com`, create a symlink into to the project, and change into the linked direcory:
+
+```
+script:
+  - ln -s /samsung-cnct/<my_golang_project> /go/src/github.com && cd /go/src/github.com/<my_golang_project>
+```
+
+Thereafter, you may execute any go tools desired.
+
+Finally, for use of the built golang project and/or binary in subsequent stages, define an artifact to persist beyond the current stage.
+
+_Here is an example of a stage using the golang container:_
+
+```
+stages:
+  - build
+
+build:
+  stage: build
+  image: quay.io/samsung-cnct/golang-container:latest
+  script:
+  - ln -s /samsung-cnct/<my_golang_project> /go/src/github.com && cd /go/src/github.com/<my_golang_project>
+  - dep init
+  - dep ensure
+  - go vet -v <my_golang_project>.go
+  - golint <my_golang_project>.go
+  - go test
+  - go build /go/src/github.com/<my_golang_project>/<my_golang_project>.go
+  artifacts:
+    paths:
+      - /samsung-cnct/<my_golang_project>
+```
+
+## Use in local environment
 
 For greater understanding of how this container works, you can use it locally on your Mac, or from inside another container, to build a golang program as follows:
 

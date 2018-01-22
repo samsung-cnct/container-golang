@@ -1,5 +1,6 @@
 FROM golang:1.9.0
 LABEL maintainer="Guinevere Saenger <guineveresaenger@gmail.com>"
+WORKDIR /go/src/app
 
 ENV DEP_VERSION v0.3.2
 ENV DEP_URL https://github.com/golang/dep/releases/download/$DEP_VERSION/dep-linux-amd64
