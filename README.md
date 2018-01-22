@@ -10,7 +10,7 @@ The intended use for this container is to provide a consistent golang test envir
 
 Gosu is used in the entrypoint.sh script to add a local user.
 
-The `dep` functionality is a flexible dependency manager that identifies the imported dependencies in the Golang code, imports them, and sets them in a `vendor` directory. This way, CI can run and test the Go code in any project inside this container. Dep is, per its creators, still in the experiemntal state, but it is actively being improved and developed, and is by far the best dependency management tool out there for CI purposes. The alternative, `godep`, would require each and every project to be checked in to CI with a `vendor` directory already created; `dep` creates one inside the golang container during each CI run.
+The `dep` functionality is a flexible dependency manager that identifies the imported dependencies in the Golang code, imports them, and sets them in a `vendor` directory. This way, CI can run and test the Go code in any project inside this container. Dep is, per its creators, still in the experimental state, but it is actively being improved and developed, and is by far the best dependency management tool out there for CI purposes. The alternative, `godep`, would require each and every project to be checked in to CI with a `vendor` directory already created; `dep` creates one inside the golang container during each CI run.
 
 The original golang image is from the [Docker Hub golang image](https://hub.docker.com/_/golang/).
 
@@ -32,11 +32,25 @@ script:
   - ln -s /samsung-cnct/<my_golang_project> /go/src/github.com && cd /go/src/github.com/<my_golang_project>
 ```
 
-Thereafter, you may execute any go tools desired.
+Add your dependencies with `dep`:
 
-Finally, for use of the built golang project and/or binary in subsequent stages, define an artifact to persist beyond the current stage.
+```
+(script:)
+    - ...
+    - dep init
+    - dep ensure
+```
 
-_Here is an example of a stage using the golang container:_
+Thereafter, you may execute any go tools desired including `go build`.
+
+Finally, for use of the built golang project and/or binary in subsequent stages, create an artifact of the created files: 
+
+```
+artifacts:
+    untracked: true
+```
+
+_Here is an example of a CI build stage using the golang container:_
 
 ```
 stages:
@@ -46,16 +60,15 @@ build:
   stage: build
   image: quay.io/samsung-cnct/golang-container:latest
   script:
-  - ln -s /samsung-cnct/<my_golang_project> /go/src/github.com && cd /go/src/github.com/<my_golang_project>
+  - ln -s /samsung-cnct/<golang_project> /go/src/github.com && cd /go/src/github.com/<golang_project>
   - dep init
   - dep ensure
-  - go vet -v <my_golang_project>.go
-  - golint <my_golang_project>.go
+  - go vet -v <golang_project>.go
+  - golint <golang_project>.go
   - go test
-  - go build /go/src/github.com/<my_golang_project>/<my_golang_project>.go
+  - go build /go/src/github.com/<golang_project>/<golang_project>.go
   artifacts:
-    paths:
-      - /samsung-cnct/<my_golang_project>
+    untracked: true
 ```
 
 ## Use in local environment
