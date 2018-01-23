@@ -1,6 +1,6 @@
 FROM golang:1.9.0
 LABEL maintainer="Guinevere Saenger <guineveresaenger@gmail.com>"
-WORKDIR /go/src/app
+WORKDIR /go/src
 
 ENV DEP_VERSION v0.3.2
 ENV DEP_URL https://github.com/golang/dep/releases/download/$DEP_VERSION/dep-linux-amd64
@@ -26,9 +26,7 @@ RUN curl -L "$GOSU_URL" -o "$GOSU_PATH" \
 
 RUN go get \
     golang.org/x/tools/cmd/godoc \
-    golang.org/x/tools/cmd/goimports \
-    github.com/golang/lint/golint \
-    honnef.co/go/tools/cmd/gosimple
+	gopkg.in/alecthomas/gometalinter.v2
 
 # entrypoint script to set the container user to host user
 

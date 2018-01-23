@@ -60,7 +60,7 @@ build:
   stage: build
   image: quay.io/samsung-cnct/golang-container:latest
   script:
-  - ln -s /samsung-cnct/<golang_project> /go/src/github.com && cd /go/src/github.com/<golang_project>
+  - ln -s /samsung-cnct/<golang_project> /go/src && cd /go/src/<golang_project>
   - dep init
   - dep ensure
   - go vet -v <golang_project>.go
