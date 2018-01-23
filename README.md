@@ -27,11 +27,11 @@ In your build and/or test stage, the golang container image can be set with the 
 image: quay.io/samsung-cnct/golang-container:latest
 ```
 
-Because CI places your files in the container's `samsung-cnct` directory, rather than in the container's GOPATH at `/go/src/github.com`, create a symlink into to the project, and change into the linked directory:
+CI places your files in the container's top level directory, at `$CI_PROJECT_PATH` (most likely `samsung-cnct/<golang-project-name>`), which is not in the container's `$GOPATH` at `/go`. To place it in the go source directory, create a symlink into the project from the container's `$WORKDIR`, which is at `$GOPATH/src`. For reference on Gitlab's built-in CI variables, see [here](https://docs.gitlab.com/ce/ci/variables/README.html).
 
 ```
 script:
-  - ln -s /samsung-cnct/<my_golang_project> /go/src/github.com && cd /go/src/github.com/<my_golang_project>
+  - ln -s $CI_PROJECT_PATH $WORKDIR && cd $WORKDIR/$CI_PROJECT_NAME
 ```
 
 Install all linters via gometalinter:
@@ -71,13 +71,14 @@ build:
   image: quay.io/samsung-cnct/golang-container:latest
   script:
   - gometalinter.v2 --install
-  - ln -s /samsung-cnct/<golang_project> /go/src && cd /go/src/<golang_project>
+  - ln -s $CI_PROJECT_PATH $WORKDIR && cd $WORKDIR/$CI_PROJECT_NAME
   - dep init
   - dep ensure
-  - go vet -v <golang_project>.go
-  - golint <golang_project>.go
+  - go vet -v $CI_PROJECT_NAME.go
+  - golint $CI_PROJECT_NAME.go // you can run just golint (installed via gometalinter)
+  - gometalinter.v2 $CI_PROJECT_NAME.go //or run the combined linters with gometalinter
   - go test
-  - go build /go/src/github.com/<golang_project>/<golang_project>.go
+  - go build $CI_PROJECT_NAME.go
   artifacts:
     untracked: true
 ```
@@ -88,28 +89,27 @@ For greater understanding of how this container works, you can use it locally on
 
 1. Navigate to your golang project's folder.
 
-2. Create two bash variables:
-    1. `go_dir=<your local gopath>`
-    2. `build_dir=<the path from the go directory to your current working directory, starting with /src>`
-    You will need these variable to mount a volume to the container, and then tell the container which directory to build in.
+2. Place your project's package name in a bash variable:
+    `package_name=<the path from the go directory to your current working directory, starting with /src>`
+    You will need this variable to tell the container which directory to build in.
 
-3. To run the container, the basic command will then look like this:
+3. To run the container, we need to mount the local GOPATH to the container's GOPATH (located at `/go`). The basic command will then look like this:
 
-    `docker run --rm -v ${go_dir}:/go -w /go${build_dir} quay.io/samsung_cnct/golang-container:latest`
+    `docker run --rm -v ${GOPATH}:/go -w /go${package_name} quay.io/samsung_cnct/golang-container:latest`
 
 Verify the go version:
 
-`docker run --rm -v ${go_dir}:/go -w /go${build_dir} quay.io/samsung_cnct/golang-container:latest go version`
+`docker run --rm -v ${GOPATH}:/go -w /go${package_name} quay.io/samsung_cnct/golang-container:latest go version`
 
 To run or build  your tool with the container, run 
 
-`docker run --rm -v ${go_dir}:/go -w /go${build_dir} quay.io/samsung_cnct/golang-container:latest go build <mytool.go>`
+`docker run --rm -v ${GOPATH}:/go -w /go${package_name} quay.io/samsung_cnct/golang-container:latest go build <mytool.go>`
 
 This will build a golang binary inside the build container and place it (via the mounted volume) into your current local directory. 
 
 *Special instructions for cross-compilation to OSX*
 Be aware that unless your local environment is a Linux environment, the above built binary cannot execute on a Mac. You must pass env variables telling the build to build for the OSX environment.
 
-`docker run --rm -v ${go_dir}:/go -w /go${build_dir} quay.io/samsung_cnct/golang-container:latest env GOOS=darwin GOARCH=amd64 go build <mytool.go>`
+`docker run --rm -v ${GOPATH}:/go -w /go${package_name} quay.io/samsung_cnct/golang-container:latest env GOOS=darwin GOARCH=amd64 go build <mytool.go>`
 
 Reference for the golang DockerHub container, including cross-compilation instructions, can be found [here](https://hub.docker.com/_/golang/)
