@@ -12,6 +12,8 @@ Gosu is used in the entrypoint.sh script to add a local user.
 
 The `dep` functionality is a flexible dependency manager that identifies the imported dependencies in the Golang code, imports them, and sets them in a `vendor` directory. This way, CI can run and test the Go code in any project inside this container. Dep is, per its creators, still in the experimental state, but it is actively being improved and developed, and is by far the best dependency management tool out there for CI purposes. The alternative, `godep`, would require each and every project to be checked in to CI with a `vendor` directory already created; `dep` creates one inside the golang container during each CI run.
 
+Additionally the container adds [godoc](https://godoc.org/golang.org/x/tools/cmd/godoc) as well as [gometalinter](https://github.com/alecthomas/gometalinter) to have access to testing tools.
+
 The original golang image is from the [Docker Hub golang image](https://hub.docker.com/_/golang/).
 
 
@@ -25,23 +27,31 @@ In your build and/or test stage, the golang container image can be set with the 
 image: quay.io/samsung-cnct/golang-container:latest
 ```
 
-Because CI places your files in the container's `samsung-cnct` directory, rather than in the container's GOPATH at `/go/src/github.com`, create a symlink into to the project, and change into the linked direcory:
+Because CI places your files in the container's `samsung-cnct` directory, rather than in the container's GOPATH at `/go/src/github.com`, create a symlink into to the project, and change into the linked directory:
 
 ```
 script:
   - ln -s /samsung-cnct/<my_golang_project> /go/src/github.com && cd /go/src/github.com/<my_golang_project>
 ```
 
+Install all linters via gometalinter:
+
+```
+(script:)
+    ...
+    - gometalinter.v2 --install
+```
+
 Add your dependencies with `dep`:
 
 ```
 (script:)
-    - ...
+    ...
     - dep init
     - dep ensure
 ```
 
-Thereafter, you may execute any go tools desired including `go build`.
+This setup should enable you to run all the standard Go tools, including `go build`, in a standardized context.
 
 Finally, for use of the built golang project and/or binary in subsequent stages, create an artifact of the created files: 
 
@@ -60,6 +70,7 @@ build:
   stage: build
   image: quay.io/samsung-cnct/golang-container:latest
   script:
+  - gometalinter.v2 --install
   - ln -s /samsung-cnct/<golang_project> /go/src && cd /go/src/<golang_project>
   - dep init
   - dep ensure
