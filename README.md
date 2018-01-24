@@ -42,7 +42,7 @@ Install all linters via gometalinter:
     - gometalinter.v2 --install
 ```
 
-Add your dependencies with `dep`:
+Note: if your code has no checked in dependencies, you can add them with `dep init`; otherwise run `dep ensure` to check for differences between your Gopkg.lock and Gopkg.toml - documentation [here](https://github.com/golang/dep#usage)
 
 ```
 (script:)
@@ -53,7 +53,7 @@ Add your dependencies with `dep`:
 
 This setup should enable you to run all the standard Go tools, including `go build`, in a standardized context.
 
-Finally, for use of the built golang project and/or binary in subsequent stages, create an artifact of the created files: 
+Finally, for use of the built golang project and/or binary in subsequent stages, create an [artifact] of the created files: 
 
 ```
 artifacts:

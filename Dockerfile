@@ -4,7 +4,7 @@ WORKDIR /go/src
 
 ENV DEP_VERSION v0.3.2
 ENV DEP_URL https://github.com/golang/dep/releases/download/$DEP_VERSION/dep-linux-amd64
-ENV DEP_SHA256SUM "d67903869dfb994d9bc627cba7314628eb398679232b27ea2bba66b08cd59cfb  /usr/local/bin/godep"
+ENV DEP_SHA256SUM "7394a53bfe4c8ff30562f48fbecbdb3ef2cc28a140deebac0c992b371344132a  /usr/local/bin/dep"
 
 ENV GOSU_VERSION 1.10
 ENV GOSU_URL https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64
@@ -16,7 +16,8 @@ RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364
 
 RUN curl -sL "$DEP_URL" -o /usr/local/bin/dep \
 	&& strip /usr/local/bin/dep \
-    && chmod 755 /usr/local/bin/dep
+    && chmod 755 /usr/local/bin/dep \
+	&& echo $DEP_SHA256SUM | sha256sum -c
 
 RUN curl -L "$GOSU_URL" -o "$GOSU_PATH" \
 	&& curl -fsSL "$GOSU_URL.asc" -o "$GOSU_PATH.asc" \
@@ -27,6 +28,10 @@ RUN curl -L "$GOSU_URL" -o "$GOSU_PATH" \
 RUN go get \
     golang.org/x/tools/cmd/godoc \
 	gopkg.in/alecthomas/gometalinter.v2
+
+RUN rm -rf /go/src/golang.org/x/tools/.git \
+	&& rm -rf /go/src/gopkg.in/alecthomas/gometalinter.v2/.git
+
 
 # entrypoint script to set the container user to host user
 
