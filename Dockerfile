@@ -4,7 +4,7 @@ WORKDIR /go/src
 
 ENV DEP_VERSION v0.4.1
 ENV DEP_URL https://github.com/golang/dep/releases/download/$DEP_VERSION/dep-linux-amd64
-ENV DEP_SHA256SUM "7394a53bfe4c8ff30562f48fbecbdb3ef2cc28a140deebac0c992b371344132a  /usr/local/bin/dep"
+ENV DEP_SHA256SUM "b6b9a83f187e75284e1dc071f336baf8d7ab1554b7ca5c5b0b9af3d9bc12993a  /usr/local/bin/dep"
 
 ENV GOSU_VERSION 1.10
 ENV GOSU_URL https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64
