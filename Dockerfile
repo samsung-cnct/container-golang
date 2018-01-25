@@ -2,7 +2,7 @@ FROM golang:1.9.2
 LABEL maintainer="Guinevere Saenger <guineveresaenger@gmail.com>"
 WORKDIR /go/src
 
-ENV DEP_VERSION v0.3.2
+ENV DEP_VERSION v0.4.1
 ENV DEP_URL https://github.com/golang/dep/releases/download/$DEP_VERSION/dep-linux-amd64
 ENV DEP_SHA256SUM "7394a53bfe4c8ff30562f48fbecbdb3ef2cc28a140deebac0c992b371344132a  /usr/local/bin/dep"
 
