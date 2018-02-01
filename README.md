@@ -27,11 +27,11 @@ In your build and/or test stage, the golang container image can be set with the 
 image: quay.io/samsung-cnct/golang-container:latest
 ```
 
-CI places your files in the container's top level directory, at `$CI_PROJECT_PATH` (most likely `samsung-cnct/<golang-project-name>`), which is not in the container's `$GOPATH` at `/go`. To place it in the go source directory, create a symlink into the project from the container's `$WORKDIR`, which is at `$GOPATH/src`. For reference on Gitlab's built-in CI variables, see [here](https://docs.gitlab.com/ce/ci/variables/README.html).
+CI places your files in the container's top level directory, at `$CI_PROJECT_PATH` (most likely `samsung-cnct/<golang-project-name>`), which is not in the container's `$GOPATH` at `/go`. To place it in the go source directory, create a symlink into the project from the container's `$GOPATH/src`. Make sure to use the project's absolute path to create the symlink. For reference on Gitlab's built-in CI variables, see [here](https://docs.gitlab.com/ce/ci/variables/README.html).
 
 ```
 script:
-  - ln -s $CI_PROJECT_PATH $WORKDIR && cd $WORKDIR/$CI_PROJECT_NAME
+  - ln -s /$CI_PROJECT_PATH $GOPATH/src && cd $GOPATH/src/$CI_PROJECT_NAME
 ```
 
 Install all linters via gometalinter:
@@ -47,7 +47,7 @@ Note: if your code has no checked in dependencies, you can add them with `dep in
 ```
 (script:)
     ...
-    - dep init
+    - dep init // do not run this if you already have a vendor folder
     - dep ensure
 ```
 
@@ -71,14 +71,22 @@ build:
   image: quay.io/samsung-cnct/golang-container:latest
   script:
   - gometalinter.v2 --install
-  - ln -s $CI_PROJECT_PATH $WORKDIR && cd $WORKDIR/$CI_PROJECT_NAME
-  - dep init
+  - ln -s /$CI_PROJECT_PATH $WORKDIR && cd $WORKDIR/$CI_PROJECT_NAME
+  - dep init // do not run this if you already have a vendor folder
   - dep ensure
-  - go vet -v $CI_PROJECT_NAME.go
-  - golint $CI_PROJECT_NAME.go // you can run just golint (installed via gometalinter)
-  - gometalinter.v2 $CI_PROJECT_NAME.go //or run the combined linters with gometalinter
+  - gometalinter.v2 - gometalinter.v2 \
+    --disable-all \
+		--enable=vet \
+		--enable=gofmt \
+		--enable=golint \
+		--enable=gosimple \
+		--sort=path \
+		--aggregate \
+		--vendor \
+		--tests \
+		./...
   - go test
-  - go build $CI_PROJECT_NAME.go
+  - go build $CI_PROJECT_NAME.go // or possibly main.go
   artifacts:
     untracked: true
 ```
