@@ -13,9 +13,10 @@ ENV GOSU_PATH /usr/local/bin/gosu
 # The golang container has curl and ca-certificates installed already, so we don't need apt-get for anything.
 
 RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \
+	gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \
   gpg --keyserver pgp.mit.edu --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 || \
   gpg --keyserver keyserver.pgp.com --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-  
+
 RUN curl -sL "$DEP_URL" -o /usr/local/bin/dep \
 	&& strip /usr/local/bin/dep \
     && chmod 755 /usr/local/bin/dep \
