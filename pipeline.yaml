@@ -1,0 +1,12 @@
+type: chart
+rootfs:
+  - image: samsung_cnct/golang-container
+    buildArgs: 
+      DEP_VERSION: "v0.4.1"
+      GOSU_VERSION: "1.10"
+    context: golang-container
+configs:
+  - stage: 
+      tests:
+        - script: scripts/stageTest.sh
+          shell: /usr/local/bin/bash
