@@ -2,8 +2,10 @@ type: chart
 rootfs:
   - image: samsung_cnct/golang-container
     buildArgs: 
-      DEP_VERSION: "v0.4.1"
-      GOSU_VERSION: "1.10"
+      - arg: DEP_VERSION
+        value: "v0.4.1"
+      - arg: GOSU_VERSION
+        value: "1.10"
     context: golang-container
 configs:
   - stage: 
