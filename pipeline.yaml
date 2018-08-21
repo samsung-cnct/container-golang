@@ -7,6 +7,7 @@ rootfs:
       - arg: GOSU_VERSION
         value: "1.10"
     context: golang-container
+    dockerContext: rootfs/golang-container
 configs:
   - stage: 
       tests:
